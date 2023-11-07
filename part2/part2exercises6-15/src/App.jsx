@@ -1,6 +1,7 @@
 import { useState, useEffect} from 'react'
 import axios from 'axios'
 import Person from './components/Person'
+import personServices from './services/persons'
 
 const App = () => {
   const [persons, setPerson] = useState([])
@@ -9,14 +10,12 @@ const App = () => {
   const [newSearch, setNewSearch] = useState('') 
 
   useEffect(() => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3002/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPerson(response.data)
+    personServices
+      .getAll()
+      .then(initialPesron => {
+        setPerson(initialPesron)
       })
-  }, [])
+    },[])
 
   const addNote = (event) => {
     event.preventDefault()
@@ -25,11 +24,27 @@ const App = () => {
         name: newName,
         number: newNumber
       }
-      setPerson(persons.concat(noteObject))
-      setNewName('')
+
+      personServices
+        .create(noteObject)
+        .then(returnedPerson => {
+          setPerson(persons.concat(returnedPerson))
+          setNewName('')
+        })
     } else {
       alert(`${newName} is already added to phonebook`)
     }
+    
+  }
+
+  const handleDelete = (personToDelete) => {
+    const shouldDelete = window.confirm(`Are you sure you want to delte ${personToDelete.name}?`)
+    
+    if (shouldDelete) {
+      personServices
+      .deletePerson(personToDelete.id)
+      setPerson((persons) => persons.filter(person => person !== personToDelete))
+    } 
     
   }
 
@@ -78,10 +93,10 @@ const App = () => {
         </div> 
       </form> 
       <h3>Numbers</h3>
-      {console.log(persons)}
       {persons.filter(person => person.name.toLowerCase().includes(newSearch.toLowerCase())).map(person => (
         <div key={person.name}>
-         <Person person={person} />
+         <Person person={person}/> 
+         <button onClick={() => handleDelete(person)}>delete</button>
          <p></p>
          </div>
       ))}

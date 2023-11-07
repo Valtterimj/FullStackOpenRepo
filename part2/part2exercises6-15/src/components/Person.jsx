@@ -1,6 +1,6 @@
-const Note = ({ person }) => {
+const Person = ({ person }) => {
     return (
       `${person.name} ${person.number}`
     )
   }
-  export default Note
+  export default Person
