@@ -2,12 +2,14 @@ import { useState, useEffect} from 'react'
 import axios from 'axios'
 import Person from './components/Person'
 import personServices from './services/persons'
+import Notification from './components/Message'
 
 const App = () => {
   const [persons, setPerson] = useState([])
   const [newName, setNewName] = useState('') 
   const [newNumber, setNewNumber] = useState('') 
   const [newSearch, setNewSearch] = useState('') 
+  const [successMessage, setSuccessMessage] = useState(null)
 
   useEffect(() => {
     personServices
@@ -31,6 +33,12 @@ const App = () => {
           setPerson(persons.concat(returnedPerson))
           setNewName('')
         })
+        setSuccessMessage(
+          `Added ${newName}`
+        )
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 5000)
     } else {
       alert(`${newName} is already added to phonebook`)
     }
@@ -45,7 +53,7 @@ const App = () => {
       .deletePerson(personToDelete.id)
       setPerson((persons) => persons.filter(person => person !== personToDelete))
     } 
-    
+
   }
 
   const handleNoteChange = (event) => {
@@ -74,6 +82,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={successMessage} />
       <div>
         <p>filter shown with< input type="text" value={newSearch} onChange={handleSearchChange}/></p>
       </div>
