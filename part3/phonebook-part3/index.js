@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const cors = require('cors')
@@ -5,6 +6,9 @@ const cors = require('cors')
 app.use(express.json())
 app.use(cors())
 app.use(express.static('dist'))
+
+const mongoose = require('mongoose')
+const Person = require('./models/person')
 
 
 let persons = [
@@ -31,7 +35,11 @@ let persons = [
 ]
 
 app.get('/api/persons', (req, res) => {
-  res.json(persons)
+
+  Person.find({}).then(notes => {
+    res.json(notes)
+  })
+
 })
 
 app.get('/info', (req, res) => {
@@ -40,14 +48,9 @@ app.get('/info', (req, res) => {
 })
 
 app.get('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const person = persons.find(person => person.id === id)
-    
-  if (person) {
+  Person.findById(request.params.id).then(person => {
     response.json(person)
-  } else {
-    response.status(404).end()
-  }
+  })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
@@ -63,30 +66,23 @@ const generateID = () => {
 
 app.post('/api/persons', (request, response) => {
   const body = request.body
-  if (!body.name){
-    return response.status(400).json({
-      error: 'name missing'
-    })
-  } 
 
-  const found = persons.find(person => person.name === body.name)
-  if (found) {
-    return response.status(400).json({
-      error: `name ${body.name} is already in use`
-    })
+  if (body.name === undefined) {
+    return response.status(400).json({ error: 'content missing' })
   }
-  
-  const person = {
-      name: body.name,
-      number: body.number,
-      id: generateID(),
-  }
-  persons = persons.concat(person)
-  response.json(person)
-  
+
+  const person = new Person({
+    name: body.name,
+    number: body.number,
+  })
+
+  person.save().then(savedPerson => {
+    console.log(savedPerson)
+    response.json(savedPerson)
+  })
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
