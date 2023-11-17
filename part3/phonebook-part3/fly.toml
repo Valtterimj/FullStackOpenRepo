@@ -1,15 +1,15 @@
-# fly.toml app configuration file generated for fullstackphonebookvaltterimj on 2023-11-15T16:57:37+02:00
+# fly.toml app configuration file generated for fullstackphonebookvaltterimj-delicate-hill-3244 on 2023-11-17T11:39:59+02:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = "fullstackphonebookvaltterimj"
+app = "fullstackphonebookvaltterimj-delicate-hill-3244"
 primary_region = "arn"
 
 [build]
 
 [env]
-  PORT = "3000" # add this
+  PORT = "3000"
 
 [http_service]
   internal_port = 3000

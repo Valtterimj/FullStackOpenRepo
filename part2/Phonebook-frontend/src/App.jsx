@@ -1,5 +1,4 @@
 import { useState, useEffect} from 'react'
-import axios from 'axios'
 import Person from './components/Person'
 import personServices from './services/persons'
 import Notification from './components/Message'
