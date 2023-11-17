@@ -32,6 +32,10 @@ const App = () => {
           setPerson(persons.concat(returnedPerson))
           setNewName('')
         })
+        .catch(error => {
+          // pääset käsiksi palvelimen palauttamaan virheilmoitusolioon näin
+          console.log(error.response.data)
+        })
         setSuccessMessage(
           `Added ${newName}`
         )
