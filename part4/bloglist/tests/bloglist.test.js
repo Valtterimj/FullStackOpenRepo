@@ -100,6 +100,27 @@ test('4.11', async () => {
       .send(newBlogWithoutUrl)
       .expect(400)
   })
+
+  //4.13
+  test('4.13', async () => {
+    const blogsAtStart = await helper.blogInDb()
+    const blogToDelete = blogsAtStart[0]
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204)
+
+    const blogsAtEnd = await helper.blogInDb()
+
+    expect(blogsAtEnd).toHaveLength(
+      helper.initialBlogs.length - 1
+    )
+
+    const titles = blogsAtEnd.map(r => r.title)
+
+    expect(titles).not.toContain(blogToDelete.title)
+  })
+  
   
 
 afterAll(async () => {

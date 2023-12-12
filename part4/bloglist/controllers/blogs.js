@@ -16,7 +16,7 @@ blogRouter.post('/', (request, response) => {
   if (!title || !url) {
     return response.status(400).json({error: 'Title and url are required'})
   }
-  
+
     const newBlog = new Blog( {
       title: request.body.title,
       author: request.body.author,
@@ -29,6 +29,11 @@ blogRouter.post('/', (request, response) => {
       .then(result => {
         response.status(201).json(result)
     })
+})
+
+blogRouter.delete('/:id', async (request, response) => {
+  await Blog.findByIdAndDelete(request.params.id)
+  response.status(204).end()
 })
 
 
